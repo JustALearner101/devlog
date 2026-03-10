@@ -1,0 +1,6 @@
+sqlalchemy>=2.0
+typer>=0.9
+rich>=13.0
+pyyaml>=6.0
+gitpython>=3.1
+

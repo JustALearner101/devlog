@@ -1,0 +1,2 @@
+[console_scripts]
+devlog = cli.main:app

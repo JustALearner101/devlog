@@ -1,0 +1,26 @@
+db:
+  path: devlog.db
+
+terminal:
+  # For Linux/macOS bash/zsh use: ~/.bash_history or ~/.zsh_history
+  # For Windows PowerShell use: ~\AppData\Roaming\Microsoft\Windows\PowerShell\PSReadLine\ConsoleHost_history.txt
+  history_path: ~/.bash_history
+  shell: bash          # bash | zsh | powershell
+  poll_interval: 5     # seconds between polls
+
+log_collector:
+  watch_paths: []      # list of log file paths to monitor, e.g. [/var/log/app.log]
+  error_patterns:
+    - "ERROR"
+    - "Exception"
+    - "Traceback"
+    - "FATAL"
+    - "CRITICAL"
+  poll_interval: 5
+
+git:
+  repos: []            # list of repo paths to watch via git hook
+
+report:
+  top_n: 5             # number of top files / errors to show in reports
+
