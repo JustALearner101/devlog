@@ -66,13 +66,18 @@ def install_git_hook(repo_path: str) -> None:
     project_root = Path(__file__).parent.parent
     hook_script = project_root / "hooks" / "post_commit_hook.py"
 
-    script_content = textwrap.dedent(f"""\
-        #!/bin/sh
-        # Dev Activity Logger — post-commit hook
-        python "{hook_script}" "$(git rev-parse --show-toplevel)"
-    """)
+    # Use forward slashes — Git Bash on Windows requires them inside shell scripts
+    hook_script_fwd = str(hook_script).replace("\\", "/")
+    script_content = (
+        "#!/bin/sh\n"
+        "# Dev Activity Logger — post-commit hook\n"
+        f'python "{hook_script_fwd}" "$(git rev-parse --show-toplevel)"\n'
+    )
 
-    hook_file.write_text(script_content, encoding="utf-8")
+    # Write without BOM, with LF line endings — required for Git Bash on Windows
+    import io
+    with io.open(str(hook_file), "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(script_content)
 
     # Make executable on Unix/macOS
     current_mode = hook_file.stat().st_mode
