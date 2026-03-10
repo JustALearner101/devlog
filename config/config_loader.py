@@ -4,6 +4,10 @@ import yaml
 
 _CONFIG_PATH = pathlib.Path(__file__).parent / "config.yaml"
 
+# Project root = parent of the config/ folder
+_PROJECT_ROOT = pathlib.Path(__file__).parent.parent
+
+
 _DEFAULTS = {
     "db": {"path": "devlog.db"},
     "terminal": {
@@ -36,6 +40,20 @@ def _resolve_path(value: str) -> str:
     return os.path.expandvars(os.path.expanduser(value))
 
 
+def _resolve_db_path(value: str) -> str:
+    """
+    Resolve the database path to an absolute path.
+    - If already absolute → use as-is (after expanding ~ and env vars).
+    - If relative → resolve relative to the project root so the DB is
+      always found regardless of the current working directory.
+    """
+    expanded = _resolve_path(value)
+    p = pathlib.Path(expanded)
+    if not p.is_absolute():
+        p = _PROJECT_ROOT / p
+    return str(p.resolve())
+
+
 def load_config() -> dict:
     """Load config.yaml and merge with defaults. Returns resolved config dict."""
     import copy
@@ -48,7 +66,7 @@ def load_config() -> dict:
         _deep_merge(config, user_config)
 
     # Resolve path fields
-    config["db"]["path"] = _resolve_path(str(config["db"]["path"]))
+    config["db"]["path"] = _resolve_db_path(str(config["db"]["path"]))
     config["terminal"]["history_path"] = _resolve_path(
         str(config["terminal"]["history_path"])
     )
